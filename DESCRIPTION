@@ -1,0 +1,22 @@
+Package: PRTI
+Title: Predict patients response to Taxane-based chemotherapy and Immunotherapy
+Version: 0.1.2
+Authors@R: 
+    person("Te", "Ma", , "602393293@qq.com", role = c("aut", "cre"))
+Description: Contains multiple signatures used to predict the sensitivity of cancer patients to immune checkpoint inhibitors or taxane from gene expression values.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 2.10)
+LazyData: true
+Imports: 
+    AUCell,
+    genefu,
+    GSVA,
+    pROC,
+    Seurat,
+    SeuratObject,
+    stats,
+    utils
