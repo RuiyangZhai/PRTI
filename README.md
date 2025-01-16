@@ -32,18 +32,31 @@ data("pdata_table",package = "PRTI")
 resultICI = PredictICI(expr = gene_table, Response = pdata_table$Response, verbose = T)
 
 # ROC curve
+library(pROC)
+library(ggplot2)
 prediction = resultICI$prediction
 prediction$Response = pdata_table$Response
-roc.list = pROC::roc(Response ~ PredictICI + gene_up + gene_down, data = prediction,
-                     levels=c("NR","R"),direction="<")
+roc.list = roc(Response ~ PredictICI + gene_up + gene_down, data = prediction,
+               levels=c("NR","R"),direction="<")
+ci.auc.list = lapply(roc.list, function(x){round(ci.auc(x),3)})
 
-ggroc(roc.list,linewidth=0.8)+
-  theme_bw()+
-  geom_abline(slope=1, intercept = 1, linetype = "dashed", alpha=1, color = "black")+
-  coord_equal()+
-  guides(colour=guide_legend(title=NULL))+
-  theme(panel.grid=element_blank())+
-  scale_color_manual(values = c("#EC3232", "#0787C3", "#F6944B"))
+labels = paste0(names(ci.auc.list)," AUC:",unlist(lapply(ci.auc.list,function(x){x[2]})),
+            "(95%CI:",unlist(lapply(ci.auc.list,function(x){x[1]})),"-",
+            unlist(lapply(ci.auc.list,function(x){x[3]})),")")
+
+cols = c("#EC3232", "#0787C3", "#F6944B")
+p = ggroc(roc.list,linewidth=0.8)+
+    theme_bw()+
+    geom_abline(slope=1, intercept = 1, linetype = "dashed", alpha=1, color = "black")+
+    coord_equal()+
+    guides(colour=guide_legend(title=NULL))+
+    theme(panel.grid=element_blank())+
+    scale_color_manual(values = cols)
+
+for(j in 1:length(labels)) {
+  p = p + annotate("text", x = 0.55, y = 0.15-(j*0.05), label = labels[j],hjust = 0, size = 4)
+} 
+p
 ```
 
 <div align=center>
