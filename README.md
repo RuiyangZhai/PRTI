@@ -17,7 +17,7 @@ devtools::install_github("RuiyangZhai/PRTI")
 ```
 
 ## Example
-The `PRTI` package provides the bulk RNA-seq and scRNA-seq data required for the example code. And the stRNA-seq data required for the example code can be downloaded from [here](https://github.com/RuiyangZhai/data/releases/download/PRTI/Spatial.rds).
+The `PRTI` package provides the bulk RNA-seq and scRNA-seq data required for the example code. And the stRNA-seq data required for the example code can be downloaded from [here](https://github.com/RuiyangZhai/data/releases/download/PRTI/Spatial.RData).
 
 PredictICI and PredictTax are used in the same way. Just take PredictICI as an example.
 ### Bulk RNA-seq data
