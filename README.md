@@ -63,37 +63,6 @@ p
   <img src="https://github.com/RuiyangZhai/img/blob/main/ROC.png?raw=true" width="500">
 </div>
 
-### scRNA-seq data
-```r
-# Load R package and internal data
-library(PRTI)
-load(system.file("extdata", "Seurat_obj.RData", package = "PRTI"))
-
-# Calculate the PredictICI score
-# The 'gsva', 'ssgsea' and 'AUCell' parameters can be selected for the 'method' parameter.
-resultICI = scPredictICI(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
-
-# Plots
-Seurat::FeaturePlot(resultICI, features = c("PredictICI","gene_up","gene_down"),ncol =3)
-Seurat::VlnPlot(resultICI, features = c("PredictICI","gene_up","gene_down"),pt.size=0,ncol =3)
-```
-<div align=center>
-  <img src="https://github.com/RuiyangZhai/img/blob/main/FeaturePlot.png?raw=true" width="800">
-  <img src="https://github.com/RuiyangZhai/img/blob/main/VlnPlot.png?raw=true" width="800">
-</div>
-
-### stRNA-seq data
-```r
-# Load R package and data
-library(PRTI)
-Spatial_obj = readRDS("../Spatial.rds")
-
-# Calculate the PredictICI score
-# The 'gsva', 'ssgsea' and 'AUCell' parameters can be selected for the 'method' parameter.
-resultICI = scPredictICI(object = Spatial_obj, method = "AUCell", slot="data", asssy="Spatial")
-
-#画图代码
-```
 ### Published signatures
 `PRTI` also provides functions for calculating published signatures.
 ```r
@@ -129,12 +98,13 @@ prediction = results$prediction
 cor_table = cor(prediction,use="complete.obs",method="spearman")
 
 library(pheatmap)
+colors = colorRampPalette(c("#ECC042","#4FB4BB","#43358E"))(10)
 pheatmap(cor_table, 
          border_color="white",
          treeheight_row = 0,
          treeheight_col = 0,
          angle_col = 90,
-         color = colors <- c("#ECC042","#C9BD5C","#A6BA77","#83B892","#60B5AD","#4DA5B5","#4B89AB","#486DA2","#455198","#43358E"),
+         color = colors,
          breaks = seq(0, 1, by = 0.1),
          legend = TRUE)
 ```
@@ -142,6 +112,44 @@ pheatmap(cor_table,
 <div align=center>
   <img src="https://github.com/RuiyangZhai/img/blob/main/corHeatmap.png?raw=true" width="550">
 </div>
+
+### scRNA-seq data
+```r
+# Load R package and internal data
+library(PRTI)
+load(system.file("extdata", "Seurat_obj.RData", package = "PRTI"))
+
+# Calculate the PredictICI score
+# The 'gsva', 'ssgsea' and 'AUCell' parameters can be selected for the 'method' parameter.
+resultICI = scPredictICI(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
+
+# Plots
+Seurat::FeaturePlot(resultICI, features = c("PredictICI","gene_up","gene_down"),ncol =3)
+Seurat::VlnPlot(resultICI, features = c("PredictICI","gene_up","gene_down"),pt.size=0,ncol =3)
+```
+<div align=center>
+  <img src="https://github.com/RuiyangZhai/img/blob/main/FeaturePlot.png?raw=true" width="800">
+  <img src="https://github.com/RuiyangZhai/img/blob/main/VlnPlot.png?raw=true" width="800">
+</div>
+
+### stRNA-seq data
+```r
+# Load R package and data
+library(PRTI)
+Spatial_obj = load("Spatial.RData")
+
+# Calculate the PredictICI score
+# The 'gsva', 'ssgsea' and 'AUCell' parameters can be selected for the 'method' parameter.
+resultICI = scPredictICI(object = Spatial_obj,method = "AUCell",slot="data",asssy="Spatial")
+
+# Plots
+library(ggplot2)
+
+Seurat::SpatialPlot(Spatial_obj,alpha = 0,image.alpha =1)+theme(legend.position = "none")
+Seurat::SpatialDimPlot(Spatial_obj,repel = F, label = F,label.size = 5,image.alpha =0.5)
+Seurat::SpatialFeaturePlot(Spatial_obj, features = c("PredictICI"),image.alpha =0.5)+theme(legend.position = "right")
+```
+![Spatial](https://github.com/RuiyangZhai/img/blob/main/Spatial.png?raw=true)
 
 ## Contact
 Any technical question please contact Ruiyang Zhai (22b928040@stu.hit.edu.cn) or Te Ma (23b928040@stu.hit.edu.cn).
