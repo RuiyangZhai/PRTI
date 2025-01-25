@@ -272,7 +272,7 @@ scPredictTax <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=F
 #' # a = CIsubtype(expr = gene_table,threshold = 0.2)
 #'
 CIsubtype <- function(expr,threshold=0.2,nPerm=1000,verbose=FALSE,doPlot=TRUE,...) {
-  file_path = system.file("data", "CItype.csv", package = "PRTI")
+  file_path = system.file("extdata", "CItype.csv", package = "PRTI")
   CItype = read.csv(file_path,header = T)
   emat = ematAdjust(expr, normMethod = "quantile",verbose = verbose,...)
   predictiCI = ntp(emat, CItype, doPlot=doPlot, nPerm=nPerm,verbose = verbose,...)
