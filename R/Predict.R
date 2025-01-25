@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-#'a = PredictICI(expr = gene_table,Response = pdata_table$Response)
+#'a = PredictICI(expr = gene_table, Response = pdata_table$Response)
 #'
 PredictICI <- function(expr,Response=NULL,verbose=FALSE,...) {
   gene_up=c('IFNG','LAG3','GBP1','CXCL9','TBX21','IGHV3-48','TRGC1','FASLG','APOL6',
@@ -27,7 +27,7 @@ PredictICI <- function(expr,Response=NULL,verbose=FALSE,...) {
               'DYNC2H1','NFIA','PTPRZ1','SORT1')
 
   predict_result = .predict_sig(expr = expr,gene_up=gene_up,gene_down = gene_down,
-                                predict_name = "ICI",method = "ssGSEA",verbose=FALSE,
+                                predict_name = "ICI",method = "ssGSEA",verbose=verbose,
                                 nCores = 1,normAUC = TRUE,...)
 
   auc_value = NA
@@ -55,7 +55,7 @@ PredictICI <- function(expr,Response=NULL,verbose=FALSE,...) {
 #' @export
 #'
 #' @examples
-#'a = PredictTax(expr = gene_table,Response = pdata_table$Response)
+#'a = PredictTax(expr = gene_table, Response = pdata_table$Response)
 #'
 PredictTax <- function(expr,Response=NULL,verbose=FALSE,...) {
   gene_up=c('GBP1','GTSE1','CTSC','FBXO5','GMNN','GBP5','NUP153','CXCL13','PDIA6',
@@ -68,7 +68,7 @@ PredictTax <- function(expr,Response=NULL,verbose=FALSE,...) {
               'BHLHE40','GPRC5A','SLC7A2','MATN3')
 
   predict_result = .predict_sig(expr = expr,gene_up=gene_up,gene_down = gene_down,
-                                predict_name = "Tax",method = "GSVA",verbose=FALSE,
+                                predict_name = "Tax",method = "GSVA",verbose=verbose,
                                 nCores = 1,normAUC = TRUE,...)
 
   auc_value = NA
@@ -95,7 +95,7 @@ PredictTax <- function(expr,Response=NULL,verbose=FALSE,...) {
 #' @export
 #' @examples
 #' Sig_list = c('Docetaxel.Sig','DDIR.Sig','HOT.score.Sig','APM.Sig')
-#' a = calculateSig(expr = gene_table,Response = pdata_table$Response,Sig_list = Sig_list)
+#' a = calculateSig(expr = gene_table, Response = pdata_table$Response, Sig_list = Sig_list)
 #'
 calculateSig <- function(expr,Response=NULL,Sig_list,verbose=FALSE) {
   Tax_sig = c('PredictTax','TGFBI.Sig','Birkbak.2018.Sig','BRCAness.Sig','CES.Sig',
@@ -176,8 +176,7 @@ calculateSig <- function(expr,Response=NULL,Sig_list,verbose=FALSE) {
 #' @export
 #'
 #' @examples
-#' load(system.file("extdata", "Seurat_obj.RData", package = "PRTI"))
-#' a = scPredictICI(object = Seurat_obj,method = "AUCell",slot="data",asssy="RNA")
+#' # a = scPredictICI(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
 #'
 scPredictICI <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=FALSE,
                            nCores = 1,normAUC = TRUE,...) {
@@ -228,8 +227,7 @@ scPredictICI <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=F
 #' @export
 #'
 #' @examples
-#' load(system.file("extdata", "Seurat_obj.RData", package = "PRTI"))
-#' a = scPredictTax(object = Seurat_obj,method = "AUCell",slot="data",asssy="RNA")
+#' # a = scPredictTax(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
 #'
 scPredictTax <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=FALSE,
                            nCores = 1,normAUC = TRUE,...) {
@@ -256,4 +254,29 @@ scPredictTax <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=F
                                 normAUC = normAUC,predict_name="Tax",...)
   object <- Seurat::AddMetaData(object, metadata = predict_result)
   return(object)
+}
+
+#'Predicting chemoimmunotherapy response subtypes
+#'
+#'This function classifies samples into subtypes responding to chemoimmunotherapy based on the gene expression matrix.
+#' @importFrom CMScaller ematAdjust ntp
+#' @param expr A matrix or data.frame of expression values where rows correspond to genes and columns correspond to samples.
+#' @param threshold FDR thresholds used to determine CI-M subtypes.
+#' @param nPerm an integer, number of permutations for pvalue estimation.
+#' @param verbose Gives information about each calculation step.
+#' @param doPlot logical, whether to produce prediction subHeatmap
+#' @param ... Other arguments passed on to ematAdjust()'s or ntp()'s params argument.
+#' @export
+#'
+#' @examples
+#' # a = CIsubtype(expr = gene_table,threshold = 0.2)
+#'
+CIsubtype <- function(expr,threshold=0.2,nPerm=1000,verbose=FALSE,doPlot=TRUE,...) {
+  file_path = system.file("data", "CItype.csv", package = "PRTI")
+  CItype = read.csv(file_path,header = T)
+  emat = ematAdjust(expr, normMethod = "quantile",verbose = verbose,...)
+  predictiCI = ntp(emat, CItype, doPlot=doPlot, nPerm=nPerm,verbose = verbose,...)
+  predictiCI$prediction = as.character(predictiCI$prediction)
+  predictiCI$prediction[predictiCI$FDR>=threshold] = "CI-M"
+  return(predictiCI)
 }

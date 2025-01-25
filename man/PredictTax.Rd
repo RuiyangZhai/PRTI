@@ -19,6 +19,6 @@ PredictTax(expr, Response = NULL, verbose = FALSE, ...)
 This function is based on gene set variation analysis (GSVA), which uses gene expression values to calculate the sensitivity score of samples to Taxanes.
 }
 \examples{
-a = PredictTax(expr = gene_table,Response = pdata_table$Response)
+a = PredictTax(expr = gene_table, Response = pdata_table$Response)
 
 }

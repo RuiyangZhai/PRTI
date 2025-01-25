@@ -20,6 +20,6 @@ This function computes signatures scores from gene expression values.
 }
 \examples{
 Sig_list = c('Docetaxel.Sig','DDIR.Sig','HOT.score.Sig','APM.Sig')
-a = calculateSig(expr = gene_table,Response = pdata_table$Response,Sig_list = Sig_list)
+a = calculateSig(expr = gene_table, Response = pdata_table$Response, Sig_list = Sig_list)
 
 }

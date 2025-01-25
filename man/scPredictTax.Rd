@@ -36,7 +36,6 @@ scPredictTax(
 Similar to the PredictTax function, but the input data is in Seurat format.
 }
 \examples{
-load(system.file("extdata", "Seurat_obj.RData", package = "PRTI"))
-a = scPredictTax(object = Seurat_obj,method = "AUCell",slot="data",asssy="RNA")
+# a = scPredictTax(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
 
 }

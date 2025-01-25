@@ -19,6 +19,6 @@ PredictICI(expr, Response = NULL, verbose = FALSE, ...)
 This function is based on single sample gene set enrichment analysis (ssGSEA), which uses gene expression values to calculate the sensitivity score of samples to immune checkpoint inhibitors (ICI).
 }
 \examples{
-a = PredictICI(expr = gene_table,Response = pdata_table$Response)
+a = PredictICI(expr = gene_table, Response = pdata_table$Response)
 
 }

@@ -36,7 +36,6 @@ scPredictICI(
 Similar to the PredictICI function, but the input data is in Seurat format.
 }
 \examples{
-load(system.file("extdata", "Seurat_obj.RData", package = "PRTI"))
-a = scPredictICI(object = Seurat_obj,method = "AUCell",slot="data",asssy="RNA")
+# a = scPredictICI(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
 
 }
