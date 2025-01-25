@@ -12,12 +12,14 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 
 packages <- c("AUCell", "genefu", "GSVA", "pROC", "Seurat")
 BiocManager::install(packages)
+devtools::install_github("Lothelab/CMScaller")
 
 devtools::install_github("RuiyangZhai/PRTI")
 ```
 
 ## Example
-The `PRTI` package provides the bulk RNA-seq and scRNA-seq data required for the example code. And the stRNA-seq data required for the example code can be downloaded from [here](https://github.com/RuiyangZhai/data/releases/download/PRTI/Spatial.RData).
+The `PRTI` package provides the bulk RNA-seq data required for the example code. And the stRNA-seq data required for the example code can be downloaded from [here](https://github.com/RuiyangZhai/data/releases/download/PRTI/Spatial.RData).
+We also provided the download link of the [scRNA-seq](https://github.com/RuiyangZhai/data/releases/download/PRTI/Seurat_obj.RData) and [stRNA-seq](https://github.com/RuiyangZhai/data/releases/download/PRTI/Spatial.RData) data required for the example code.
 
 PredictICI and PredictTax are used in the same way. Just take PredictICI as an example.
 ### Bulk RNA-seq data
@@ -60,7 +62,7 @@ p
 ```
 
 <div align=center>
-  <img src="https://github.com/RuiyangZhai/img/blob/main/ROC.png?raw=true" width="500">
+  <img src="https://github.com/RuiyangZhai/img/blob/main/ROC.png?raw=true" width="600">
 </div>
 
 ### Published signatures
@@ -117,7 +119,7 @@ pheatmap(cor_table,
 ```r
 # Load R package and internal data
 library(PRTI)
-load(system.file("extdata", "Seurat_obj.RData", package = "PRTI"))
+load("Seurat_obj.RData")
 
 # Calculate the PredictICI score
 # The 'gsva', 'ssgsea' and 'AUCell' parameters can be selected for the 'method' parameter.
@@ -136,7 +138,7 @@ Seurat::VlnPlot(resultICI, features = c("PredictICI","gene_up","gene_down"),pt.s
 ```r
 # Load R package and data
 library(PRTI)
-Spatial_obj = load("Spatial.RData")
+load("Spatial.RData")
 
 # Calculate the PredictICI score
 # The 'gsva', 'ssgsea' and 'AUCell' parameters can be selected for the 'method' parameter.
@@ -150,6 +152,45 @@ Seurat::SpatialDimPlot(Spatial_obj,repel = F, label = F,label.size = 5,image.alp
 Seurat::SpatialFeaturePlot(Spatial_obj, features = c("PredictICI"),image.alpha =0.5)+theme(legend.position = "right")
 ```
 ![Spatial](https://github.com/RuiyangZhai/img/blob/main/Spatial.png?raw=true)
+
+### CIsubtype
+Example data can be downloaded from [here](https://github.com/RuiyangZhai/data/releases/download/PRTI/CIsubtype.RData).
+```r
+# Load R package and data
+library(PRTI)
+load("CIsubtype.RData")
+
+#Predicting CIsubtypes
+CIsubtypes = CIsubtype(gene_table,threshold = 0.2,doPlot = TRUE)
+
+#Plots
+data_plot<-as.data.frame(table(CIsubtypes$prediction,pdata_table$Response))
+colnames(data_plot)[1:2] = c("Group","Response")
+data_plot$Percent = (data_plot$Freq/sum(data_plot$Freq))*100
+
+chisq_data = reshape2::dcast(data_plot,Response ~ Group, value.var = "Freq")
+rownames(chisq_data) = chisq_data[,1]
+chisq_data = chisq_data[,-1]
+
+library(ggplot2)
+ggplot(dfdata, aes(x = Group, y = Percent, fill = Response)) +
+  geom_bar(stat = "identity", width = 0.9) +
+  geom_text(aes(label = paste0(Percent, "%")), 
+            position = position_stack(vjust = 0.5), size = 5) +
+  labs(x = "Group", y = "Percent",
+       title = "CI subtype",
+       subtitle =paste0("Chisq, p = ",chisq.test(chisq_data)[["p.value"]])) +
+  scale_fill_manual(values = c("R" = "#56B4E9","NR" = "#E69F00")) +
+  theme_classic() +
+  theme(
+    axis.line = element_line(size = 1),
+    text = element_text(size = 14, face = "bold"),
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5))
+```
+<div align=center>
+  <img src="https://github.com/RuiyangZhai/img/blob/main/CIsubtype.png?raw=true" width="600">
+</div>
 
 ## Contact
 Any technical question please contact Ruiyang Zhai (22b928040@stu.hit.edu.cn) or Te Ma (23b928040@stu.hit.edu.cn).
