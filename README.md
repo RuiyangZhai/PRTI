@@ -192,4 +192,4 @@ ggplot(dfdata, aes(x = Group, y = Percent, fill = Response)) +
 </div>
 
 ## Contact
-Any technical question please contact Ruiyang Zhai (22b928040@stu.hit.edu.cn) or Te Ma (23b928040@stu.hit.edu.cn).
+Any technical question please contact Ruiyang Zhai (zhairuiyang@foxmail.com) or Te Ma (mate.compbio@foxmail.com).
