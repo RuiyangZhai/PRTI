@@ -1,7 +1,7 @@
 # PRTI
 ![PRTI](https://github.com/RuiyangZhai/img/blob/main/PRTI.png?raw=true)
 
-`PRTI` (Predicting patients Response to Taxane-based chemotherapy and I mmunotherapy) is an R package designed to predict tumor treatment response based on bulk and single-cell transcriptomics. We also provide an interactive online webserver with the same name: [PRTI](http://218.8.241.248:3838/PRTI/ "PRTI web").
+`PRTI` (Predicting patients Response to Taxane-based chemotherapy and Immunotherapy) is an R package designed to predict tumor treatment response based on bulk and single-cell transcriptomics. We also provide an interactive online webserver with the same name: [PRTI](http://218.8.241.248:3838/PRTI/ "PRTI web").
 
 ## Installation
 
