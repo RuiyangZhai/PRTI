@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-#'a = PredictICI(expr = gene_table, Response = pdata_table$Response)
+#' res = PredictICI(expr = gene_table, Response = pdata_table$Response)
 #'
 PredictICI <- function(expr,Response=NULL,verbose=FALSE,...) {
   gene_up=c('IFNG','LAG3','GBP1','CXCL9','TBX21','IGHV3-48','TRGC1','FASLG','APOL6',
@@ -55,7 +55,7 @@ PredictICI <- function(expr,Response=NULL,verbose=FALSE,...) {
 #' @export
 #'
 #' @examples
-#'a = PredictTax(expr = gene_table, Response = pdata_table$Response)
+#' res = PredictTax(expr = gene_table, Response = pdata_table$Response)
 #'
 PredictTax <- function(expr,Response=NULL,verbose=FALSE,...) {
   gene_up=c('GBP1','GTSE1','CTSC','FBXO5','GMNN','GBP5','NUP153','CXCL13','PDIA6',
@@ -94,21 +94,20 @@ PredictTax <- function(expr,Response=NULL,verbose=FALSE,...) {
 #' @param Sig_list The signatures that need to be calculated.Setting the parameter to `all` means calculating all signatures.Setting the parameter to `Tax` or `ICI` means calculating all signatures for the corresponding category.
 #' @export
 #' @examples
-#' Sig_list = c('Docetaxel.Sig','DDIR.Sig','HOT.score.Sig','APM.Sig')
-#' a = calculateSig(expr = gene_table, Response = pdata_table$Response, Sig_list = Sig_list)
+#' Sig_list = c('GEP.Sig','DDIR.Sig','HOT.score.Sig','CYT.Sig')
+#' res = calculateSig(expr = gene_table, Response = pdata_table$Response, Sig_list = Sig_list)
 #'
 calculateSig <- function(expr,Response=NULL,Sig_list,verbose=FALSE) {
-  Tax_sig = c('PredictTax','TGFBI.Sig','Birkbak.2018.Sig','BRCAness.Sig','CES.Sig',
-              'DDIR.Sig','Docetaxel.Sig','TOP2A.Sig','GPS_3.Sig','HTICS.Sig',
-              'ILB.Sig','Juul.2010.Sig','Liu.2018.Sig','m6A.score.Sig','Paclitaxel.Sig',
-              'RB.Sig','SELECT3.Sig','SELECT4.Sig','SELECT6.Sig','Zhu.2020.Sig',
-              'MammaPrint.Sig','GGI.Sig','CIN70.Sig','RB.loss.Sig','Oncotype.DX.Sig')
+  Tax_sig = c('PredictTax','TP53.Sig','Liu.2018.Sig','MammaPrint.Sig','GGI.Sig',
+              'DDIR.Sig','RB.Sig','CIN70.Sig','Bai.2022.Sig','Zhu.2020.Sig',
+              'CES.Sig','Birkbak.2018.Sig','RAD51.Sig','RB.loss.Sig','TYMS.Sig',
+              'Tegafur_uracil.Sig','CD96.Sig','Juul.2010.Sig','Chen.2021.Sig','Weng.2022.Sig',
+              'ILB.Sig','Oncotype.DX.Sig')
 
-  ICI_sig = c('PredictICI','APM.Sig','Atezolizumab.Sig','CYT.Sig','PDL1.Sig','HOT.score.Sig',
-              'IFN.Y.10.Sig','GEP.Sig','IFN.Y.28.Sig','IFNy4gene.Sig','IIS.Sig','ILB.Sig',
-              'Inflamed20genes.Sig','CTLA4.Sig','IPRES.Sig','PD1.Sig',
-              'Pan_F_TBRS.Sig','Roh.immune.Sig','SELECT1.Sig','SIA.Sig','T.Persistence.Sig',
-              'TIS.Sig','TLS.Sig','GBP2.Sig','CD8A.Sig')
+  ICI_sig = c('PredictICI','GEP.Sig','GBP2.Sig','Roh.immune.Sig','Traf3_KO.Sig','IFN.Y.28.Sig',
+              'CTLA4.Sig','Atezolizumab.Sig','PDL1.Sig','CYT.Sig','CD8A.Sig','Hwang.2020.Sig',
+              'IFN.Y.10.Sig','TSE.Sig','Inflamed20genes.Sig','NI.score.Sig','HOT.score.Sig',
+              'SELECT1.Sig','CD96.Sig','SIA.Sig','IMPRES.Sig')
   Sig_table = data.frame(Signature = c(Tax_sig,ICI_sig),
                          Group = c(rep("Tax",length(Tax_sig)),
                                    rep("ICI",length(ICI_sig))))
@@ -176,7 +175,7 @@ calculateSig <- function(expr,Response=NULL,Sig_list,verbose=FALSE) {
 #' @export
 #'
 #' @examples
-#' # a = scPredictICI(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
+#' # res = scPredictICI(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
 #'
 scPredictICI <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=FALSE,
                            nCores = 1,normAUC = TRUE,...) {
@@ -227,7 +226,7 @@ scPredictICI <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=F
 #' @export
 #'
 #' @examples
-#' # a = scPredictTax(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
+#' # res = scPredictTax(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
 #'
 scPredictTax <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=FALSE,
                            nCores = 1,normAUC = TRUE,...) {
@@ -269,7 +268,7 @@ scPredictTax <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=F
 #' @export
 #'
 #' @examples
-#' # a = CIsubtype(expr = gene_table,threshold = 0.2)
+#' res = CIsubtype(expr = gene_table,threshold = 0.2)
 #'
 CIsubtype <- function(expr,threshold=0.2,nPerm=1000,verbose=FALSE,doPlot=TRUE,...) {
   file_path = system.file("extdata", "CItype.csv", package = "PRTI")
