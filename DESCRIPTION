@@ -1,6 +1,6 @@
 Package: PRTI
 Title: Predict patients response to Taxane-based chemotherapy and Immunotherapy
-Version: 0.1.3
+Version: 0.1.4
 Authors@R: 
     person("Te", "Ma", , "602393293@qq.com", role = c("aut", "cre"))
 Description: Contains multiple signatures used to predict the sensitivity of cancer patients to immune checkpoint inhibitors or taxane from gene expression values.

@@ -36,6 +36,6 @@ scPredictTax(
 Similar to the PredictTax function, but the input data is in Seurat format.
 }
 \examples{
-# a = scPredictTax(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
+# res = scPredictTax(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
 
 }

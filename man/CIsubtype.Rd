@@ -30,6 +30,6 @@ CIsubtype(
 This function classifies samples into subtypes responding to chemoimmunotherapy based on the gene expression matrix.
 }
 \examples{
-# a = CIsubtype(expr = gene_table,threshold = 0.2)
+res = CIsubtype(expr = gene_table,threshold = 0.2)
 
 }

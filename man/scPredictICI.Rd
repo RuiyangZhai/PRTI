@@ -36,6 +36,6 @@ scPredictICI(
 Similar to the PredictICI function, but the input data is in Seurat format.
 }
 \examples{
-# a = scPredictICI(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
+# res = scPredictICI(object = Seurat_obj, method = "AUCell", slot="data", asssy="RNA")
 
 }

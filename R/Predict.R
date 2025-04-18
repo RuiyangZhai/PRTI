@@ -94,23 +94,15 @@ PredictTax <- function(expr,Response=NULL,verbose=FALSE,...) {
 #' @param Sig_list The signatures that need to be calculated.Setting the parameter to `all` means calculating all signatures.Setting the parameter to `Tax` or `ICI` means calculating all signatures for the corresponding category.
 #' @export
 #' @examples
-#' Sig_list = c('GEP.Sig','DDIR.Sig','HOT.score.Sig','CYT.Sig')
+#' file_path = system.file("extdata", "Sig_table.csv", package = "PRTI")
+#' Sig_table = read.csv(file_path,header = T)
+#' Sig_list = Sig_table$Signature[1:5]
 #' res = calculateSig(expr = gene_table, Response = pdata_table$Response, Sig_list = Sig_list)
 #'
 calculateSig <- function(expr,Response=NULL,Sig_list,verbose=FALSE) {
-  Tax_sig = c('PredictTax','TP53.Sig','Liu.2018.Sig','MammaPrint.Sig','GGI.Sig',
-              'DDIR.Sig','RB.Sig','CIN70.Sig','Bai.2022.Sig','Zhu.2020.Sig',
-              'CES.Sig','Birkbak.2018.Sig','RAD51.Sig','RB.loss.Sig','TYMS.Sig',
-              'Tegafur_uracil.Sig','CD96.Sig','Juul.2010.Sig','Chen.2021.Sig','Weng.2022.Sig',
-              'ILB.Sig','Oncotype.DX.Sig')
+  file_path = system.file("extdata", "Sig_table.csv", package = "PRTI")
+  Sig_table = read.csv(file_path,header = T)
 
-  ICI_sig = c('PredictICI','GEP.Sig','GBP2.Sig','Roh.immune.Sig','Traf3_KO.Sig','IFN.Y.28.Sig',
-              'CTLA4.Sig','Atezolizumab.Sig','PDL1.Sig','CYT.Sig','CD8A.Sig','Hwang.2020.Sig',
-              'IFN.Y.10.Sig','TSE.Sig','Inflamed20genes.Sig','NI.score.Sig','HOT.score.Sig',
-              'SELECT1.Sig','CD96.Sig','SIA.Sig','IMPRES.Sig')
-  Sig_table = data.frame(Signature = c(Tax_sig,ICI_sig),
-                         Group = c(rep("Tax",length(Tax_sig)),
-                                   rep("ICI",length(ICI_sig))))
   if ("all" %in% Sig_list) {
     Sig_temp = Sig_table
   }else if("Tax" %in% Sig_list){

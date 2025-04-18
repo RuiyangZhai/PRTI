@@ -184,12 +184,11 @@
 .predict_sig <- function(expr,gene_up,gene_down,predict_name,method=c('GSVA','ssGSEA','AUCell'),
                          verbose=FALSE,nCores = 1,normAUC = TRUE,...) {
   method <- match.arg(method)
-  genes_list = list(gene_up=gene_up,gene_down=gene_down)
 
-  gene_up_num = sum(genes_list$gene_up%in%rownames(expr))
-  gene_down_num = sum(genes_list$gene_down%in%rownames(expr))
-  gene_up_percent = round((gene_up_num/length(genes_list$gene_up))*100,1)
-  gene_down_percent = round((gene_down_num/length(genes_list$gene_down))*100,1)
+  gene_up_num = sum(gene_up%in%rownames(expr))
+  gene_down_num = sum(gene_down%in%rownames(expr))
+  gene_up_percent = round((gene_up_num/length(gene_up))*100,1)
+  gene_down_percent = round((gene_down_num/length(gene_down))*100,1)
 
   if (verbose) {
     cat(gene_up_num," up-regulated genes in the ",predict_name,"_gene_list are found ","(",gene_up_percent,"%).\n",sep ="")
@@ -203,9 +202,11 @@
   }
 
   if (method=="AUCell") {
+    set.seed(47)
     cells_rankings <- AUCell::AUCell_buildRankings(exprMat = as.matrix(expr),splitByBlocks=TRUE,
                                                    verbose = verbose,...)
-    cells_AUC <- AUCell::AUCell_calcAUC(geneSets = genes_list, rankings = cells_rankings,
+    cells_AUC <- AUCell::AUCell_calcAUC(geneSets = list(gene_up=gene_up,gene_down=gene_down),
+                                        rankings = cells_rankings,
                                         verbose = verbose,nCores = nCores,normAUC = normAUC)
     predict_result = data.frame(gene_up = as.numeric(AUCell::getAUC(cells_AUC)["gene_up", ]),
                                 gene_down = as.numeric(AUCell::getAUC(cells_AUC)["gene_down", ]))
@@ -214,32 +215,43 @@
   }else if(method=="GSVA"){
     gsva_version <- utils::packageVersion("GSVA")
     if (gsva_version >= "1.50.0") {
-      gsvapar = GSVA::gsvaParam(exprData = as.matrix(expr),geneSets = genes_list,kcdf='Gaussian',...)
-      predict_result = GSVA::gsva(gsvapar,verbose=verbose)
+      gsvapar_up = GSVA::gsvaParam(exprData = as.matrix(expr),geneSets = list(gene_up),kcdf='Gaussian',...)
+      gsvapar_down = GSVA::gsvaParam(exprData = as.matrix(expr),geneSets = list(gene_down),kcdf='Gaussian',...)
+      predict_up = GSVA::gsva(gsvapar_up,verbose=verbose)
+      predict_down = GSVA::gsva(gsvapar_down,verbose=verbose)
     }else{
-      predict_result = GSVA::gsva(expr = as.matrix(expr),gset.idx.list = genes_list,method='gsva',kcdf='Gaussian',verbose=verbose,...)
+      predict_up = GSVA::gsva(expr = as.matrix(expr),gset.idx.list = list(gene_up),method='gsva',kcdf='Gaussian',verbose=verbose,...)
+      predict_down = GSVA::gsva(expr = as.matrix(expr),gset.idx.list = list(gene_down),method='gsva',kcdf='Gaussian',verbose=verbose,...)
     }
+    predict_result = rbind(predict_up,predict_down)
     predict_result = as.data.frame(t(predict_result))
+    colnames(predict_result) = c("gene_up","gene_down")
     predict_result[,paste0("Predict",predict_name)] = as.numeric(predict_result$gene_up) - as.numeric(predict_result$gene_down)
   }else if(method=="ssGSEA"){
 
     gsva_version <- utils::packageVersion("GSVA")
     if (gsva_version >= "1.50.0") {
-      gsvapar = GSVA::ssgseaParam(exprData = as.matrix(expr),geneSets = genes_list,...)
+      gsvapar_up = GSVA::ssgseaParam(exprData = as.matrix(expr),geneSets = list(gene_up),...)
+      gsvapar_down = GSVA::ssgseaParam(exprData = as.matrix(expr),geneSets = list(gene_down),...)
       if (verbose) {
-        predict_result <- GSVA::gsva(gsvapar,verbose=verbose)
+        predict_up = GSVA::gsva(gsvapar_up,verbose=verbose)
+        predict_down = GSVA::gsva(gsvapar_down,verbose=verbose)
       }else{
-        capt = utils::capture.output(predict_result <- GSVA::gsva(gsvapar,verbose=verbose), file = NULL)
+        capt = utils::capture.output(predict_up <- GSVA::gsva(predict_up,verbose=verbose), file = NULL)
+        capt = utils::capture.output(predict_down <- GSVA::gsva(predict_down,verbose=verbose), file = NULL)
       }
     }else{
       if (verbose) {
-        predict_result <- GSVA::gsva(expr = as.matrix(expr),gset.idx.list = genes_list,method="ssgsea",verbose=verbose,...)
+        predict_up <- GSVA::gsva(expr = as.matrix(expr),gset.idx.list = list(gene_up),method="ssgsea",verbose=verbose,...)
+        predict_down <- GSVA::gsva(expr = as.matrix(expr),gset.idx.list = list(gene_down),method="ssgsea",verbose=verbose,...)
       }else{
-        capt = utils::capture.output(predict_result <- GSVA::gsva(expr = as.matrix(expr),gset.idx.list = genes_list,method="ssgsea",verbose=verbose,...), file = NULL)
+        capt = utils::capture.output(predict_up <- GSVA::gsva(expr = as.matrix(expr),gset.idx.list = list(gene_up),method="ssgsea",verbose=verbose,...), file = NULL)
+        capt = utils::capture.output(predict_down <- GSVA::gsva(expr = as.matrix(expr),gset.idx.list = list(gene_down),method="ssgsea",verbose=verbose,...), file = NULL)
       }
     }
-
+    predict_result = rbind(predict_up,predict_down)
     predict_result = as.data.frame(t(predict_result))
+    colnames(predict_result) = c("gene_up","gene_down")
     predict_result[,paste0("Predict",predict_name)] = as.numeric(predict_result$gene_up) - as.numeric(predict_result$gene_down)
   }
   return(predict_result)
