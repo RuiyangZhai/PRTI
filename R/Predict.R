@@ -95,7 +95,7 @@ PredictTax <- function(expr,Response=NULL,verbose=FALSE,...) {
 #' @export
 #' @examples
 #' file_path = system.file("extdata", "Sig_table.csv", package = "PRTI")
-#' Sig_table = read.csv(file_path,header = T)
+#' Sig_table = read.csv(file_path,header = TRUE)
 #' Sig_list = Sig_table$Signature[1:5]
 #' res = calculateSig(expr = gene_table, Response = pdata_table$Response, Sig_list = Sig_list)
 #'
@@ -159,7 +159,7 @@ calculateSig <- function(expr,Response=NULL,Sig_list,verbose=FALSE) {
 #' @param object An Seurat object.
 #' @param method Scoring algorithm, including `GSVA`, `ssGSEA` and `AUCell`.
 #' @param slot Specific assay data to get.
-#' @param asssy Specific assay to get data from. Spatial transcriptome data may need to set to `Spatial`.
+#' @param asssy Specific assay to get data from. SCTransform normalized data is recommended. Spatial transcriptome data may need to set to `Spatial`.
 #' @param verbose Gives information about each calculation step.
 #' @param nCores When the method is selected as' aucell ', this is one of the parameters of the AUCell_calcAUC function.
 #' @param normAUC When the method is selected as' aucell ', this is one of the parameters of the AUCell_calcAUC function
@@ -210,7 +210,7 @@ scPredictICI <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=F
 #' @param object An Seurat object.
 #' @param method Scoring algorithm, including `GSVA`, `ssGSEA` and `AUCell`.
 #' @param slot Specific assay data to get.
-#' @param asssy Specific assay to get data from. Spatial transcriptome data may need to set to `Spatial`.
+#' @param asssy Specific assay to get data from. SCTransform normalized data is recommended. Spatial transcriptome data may need to set to `Spatial`.
 #' @param verbose Gives information about each calculation step.
 #' @param nCores When the method is selected as' aucell ', this is one of the parameters of the AUCell_calcAUC function.
 #' @param normAUC When the method is selected as' aucell ', this is one of the parameters of the AUCell_calcAUC function
@@ -247,12 +247,12 @@ scPredictTax <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=F
   return(object)
 }
 
-#'Predicting chemoimmunotherapy response subtypes
+#'Predicting chemoimmunotherapy response subgroups
 #'
-#'This function classifies samples into subtypes responding to chemoimmunotherapy based on the gene expression matrix.
+#'This function classifies samples into subgroups responding to chemoimmunotherapy based on the gene expression matrix.
 #' @importFrom CMScaller ematAdjust ntp
 #' @param expr A matrix or data.frame of expression values where rows correspond to genes and columns correspond to samples.
-#' @param threshold FDR thresholds used to determine CI-M subtypes.
+#' @param threshold FDR thresholds used to determine CI-M subgroups.
 #' @param nPerm an integer, number of permutations for pvalue estimation.
 #' @param verbose Gives information about each calculation step.
 #' @param doPlot logical, whether to produce prediction subHeatmap
@@ -260,9 +260,9 @@ scPredictTax <- function(object,method="AUCell",slot="data",asssy=NULL,verbose=F
 #' @export
 #'
 #' @examples
-#' res = CIsubtype(expr = gene_table,threshold = 0.2)
+#' res = CIsubgroup(expr = gene_table,threshold = 0.2)
 #'
-CIsubtype <- function(expr,threshold=0.2,nPerm=1000,verbose=FALSE,doPlot=TRUE,...) {
+CIsubgroup <- function(expr,threshold=0.2,nPerm=1000,verbose=FALSE,doPlot=TRUE,...) {
   file_path = system.file("extdata", "CItype.csv", package = "PRTI")
   CItype = read.csv(file_path,header = T)
   emat = ematAdjust(expr, normMethod = "quantile",verbose = verbose,...)

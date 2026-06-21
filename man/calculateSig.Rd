@@ -20,7 +20,7 @@ This function computes signatures scores from gene expression values.
 }
 \examples{
 file_path = system.file("extdata", "Sig_table.csv", package = "PRTI")
-Sig_table = read.csv(file_path,header = T)
+Sig_table = read.csv(file_path,header = TRUE)
 Sig_list = Sig_table$Signature[1:5]
 res = calculateSig(expr = gene_table, Response = pdata_table$Response, Sig_list = Sig_list)
 

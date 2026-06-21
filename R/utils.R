@@ -84,8 +84,12 @@
   index = which(genes %in% row.names(expr))
   genes = genes[index]
   coefs = coefs[index]
-  x = expr[genes,]
-  y = apply(x, 2, function(a){stats::weighted.mean(a,coefs,na.rm = na.rm)})
+  x = t(expr[genes,])
+  if (na.rm) {
+    x[is.na(x)] = 0
+  }
+  #y = apply(x, 2, function(a){stats::weighted.mean(a,coefs,na.rm = na.rm)})
+  y = x %*% coefs
   return(y)
 }
 
@@ -237,8 +241,8 @@
         predict_up = GSVA::gsva(gsvapar_up,verbose=verbose)
         predict_down = GSVA::gsva(gsvapar_down,verbose=verbose)
       }else{
-        capt = utils::capture.output(predict_up <- GSVA::gsva(predict_up,verbose=verbose), file = NULL)
-        capt = utils::capture.output(predict_down <- GSVA::gsva(predict_down,verbose=verbose), file = NULL)
+        capt = utils::capture.output(predict_up <- GSVA::gsva(gsvapar_up,verbose=verbose), file = NULL)
+        capt = utils::capture.output(predict_down <- GSVA::gsva(gsvapar_down,verbose=verbose), file = NULL)
       }
     }else{
       if (verbose) {
